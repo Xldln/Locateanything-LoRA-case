@@ -2,3 +2,7 @@
 weights/*
 
 datasets/*
+!datasets/.gitkeep
+!weights/.gitkeep
+
+.ipynb_checkpoints
