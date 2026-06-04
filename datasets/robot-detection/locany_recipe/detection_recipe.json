@@ -1,0 +1,8 @@
+{
+  "my_detection": {
+    "annotation": "datasets/robot-detection/data/annotations/detection.jsonl",
+    "root": "datasets/robot-detection/data/images/",
+    "repeat_time": 1.0,
+    "data_augment": true
+  }
+}
