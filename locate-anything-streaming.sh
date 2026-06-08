@@ -1,21 +1,19 @@
 #!/usr/bin/env bash
 set -x
 
-unset CONDA_SHLVL
-unset CONDA_EXE
-unset _CE_CONDA
-unset CONDA_PREFIX
-unset CONDA_PROMPT_MODIFIER
-unset CONDA_PYTHON_EXE
-unset CONDA_DEFAULT_ENV
-export PATH=$(echo "$PATH" | tr ':' '\n' | grep -v 'anaconda3' | paste -sd ':' -)
-echo "Conda has been disabled. Running training script..."
-pip install hf_xet
+source "$(conda info --base 2>/dev/null)/etc/profile.d/conda.sh"
+conda activate lam
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export HF_HOME="${SCRIPT_DIR}/hf_models"
+export HF_HUB_OFFLINE=1
+export TRANSFORMERS_OFFLINE=1
+
+pip install hf_xet sortedcontainers 
 export WANDB_PROJECT="star-nemo"
 export WANDB_RUN_ID="finetune"
 export WANDB_RESUME="allow"
-export HF_TOKEN="${HF_TOKEN:?Please set HF_TOKEN environment variable}"
-
+export PYTHONPATH=$PYTHONPATH:$(pwd)/pkg
 GPUS=${GPUS:-1}
 NNODES=${1:-1}
 OUTPUT_DIR=${2:-"datasets/robot-detection/work_dirs/locany_debug"}
@@ -34,7 +32,7 @@ export NCCL_DEBUG=INFO
 
 script_path=${BASH_SOURCE[0]}
 script_name=$(basename "$script_path")
-MODEL_PATH=${MODEL_PATH:-"hf_model"}
+MODEL_PATH=${MODEL_PATH:-"nvidia/LocateAnything-3B"}
 
 LAUNCHER=pytorch torchrun \
     --nnodes=$NNODES \
@@ -42,14 +40,14 @@ LAUNCHER=pytorch torchrun \
     --master_addr=$MASTER_ADDR \
     --nproc_per_node=$GPUS \
     --master_port=$PORT \
-  eaglevl/train/locany_finetune_magi_stream.py \
+   pkg/eaglevl/train/locany_finetune_magi_stream.py \
   --model_name_or_path ${MODEL_PATH} \
   --max_steps 8000 \
   --output_dir ${OUTPUT_DIR} \
   --meta_path "./recipe/ablation.json" \
   --overwrite_output_dir False \
   --block_size 6 \
-  --attn_implementation magi \
+  --attn_implementation sdpa \
   --causal_attn False \
   --freeze_llm False \
   --freeze_mlp False \

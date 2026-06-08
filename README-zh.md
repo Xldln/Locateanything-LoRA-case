@@ -21,13 +21,13 @@ conda create -n lam python=3.10 -y
 pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
 
 cd pkg/yolo && pip install -e .
-cd pkg/locateanything && pip install -e .
+cd pkg/eaglevl && pip install -e .
 ```
 
 ## 训练
 
 ```bash
-cd pkg/locateanything
+cd pkg/eaglevl
 bash ../../locate-anything-streaming.sh
 ```
 

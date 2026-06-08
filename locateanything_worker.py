@@ -10,19 +10,20 @@
 locateanything_worker.py - A reusable worker for LocateAnything inference.
 """
 import re
+from pathlib import Path
+import os
+
+
+MODEL_CACHE_DIR = Path(__file__).parent / "hf_models"
+MODEL_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
+os.environ["HF_HOME"] = str(MODEL_CACHE_DIR)
+os.environ["HF_HUB_CACHE"] = str(MODEL_CACHE_DIR / "hub")
+
 
 import torch
 from PIL import Image
 from transformers import AutoModel, AutoTokenizer, AutoProcessor
-
-
-# ---- HF mirror & local cache ----
-MODEL_CACHE_DIR = Path(__file__).parent / "hf_models"
-os.environ.setdefault("HF_ENDPOINT", "https://hf-mirror.com")
-os.environ.setdefault("HF_HOME", str(MODEL_CACHE_DIR))
-os.environ.setdefault("HF_HUB_CACHE", str(MODEL_CACHE_DIR / "hub"))
-MODEL_CACHE_DIR.mkdir(parents=True, exist_ok=True)
-
 
 
 class LocateAnythingWorker:
