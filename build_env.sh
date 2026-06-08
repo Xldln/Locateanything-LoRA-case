@@ -16,11 +16,12 @@ cd pkg/eaglevl && pip install -e . && cd ../../
 
 
 ## other deps
-pip install hf_xet sortedcontainers
+pip install hf_xet sortedcontainers pynvml
 
 
 ## download model weights
 
 unset ALL_PROXY all_proxy HTTP_PROXY http_proxy HTTPS_PROXY https_proxy
 
+cd datasets/robot-detection/data && wget https://yubinux.cn/tmp/images.zip && unzip images.zip && cd ../../../
 python download_locate_model.py

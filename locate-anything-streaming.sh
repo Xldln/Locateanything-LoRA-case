@@ -10,12 +10,12 @@ export HF_HUB_OFFLINE=1
 export TRANSFORMERS_OFFLINE=1
 
 export WANDB_PROJECT="star-nemo"
-export WANDB_RUN_ID="finetune-lora"
+export WANDB_RUN_ID="finetune"
 export WANDB_RESUME="allow"
 export PYTHONPATH=$PYTHONPATH:$(pwd)/pkg
 GPUS=${GPUS:-1}
 NNODES=${1:-1}
-OUTPUT_DIR=${2:-"datasets/robot-detection/work_dirs/locany_lora"}
+OUTPUT_DIR=${2:-"datasets/robot-detection/work_dirs/locany_debug"}
 NODE_RANK=${NODE_RANK:-0}
 PORT=${PORT:-29500}
 MASTER_ADDR=${MASTER_ADDR:-"127.0.0.1"}
@@ -41,39 +41,40 @@ LAUNCHER=pytorch torchrun \
     --master_port=$PORT \
    pkg/eaglevl/train/locany_finetune_magi_stream.py \
   --model_name_or_path ${MODEL_PATH} \
+  --max_steps 8000 \
   --output_dir ${OUTPUT_DIR} \
-  --meta_path "datasets/robot-detection/locany_recipe/detection_recipe.json" \
+  --meta_path "./recipe/ablation.json" \
   --overwrite_output_dir False \
   --block_size 6 \
   --attn_implementation sdpa \
   --causal_attn False \
-  --freeze_llm True \
-  --freeze_mlp True \
-  --freeze_backbone True \
-  --use_llm_lora 16 \
-  --use_backbone_lora 8 \
+  --freeze_llm False \
+  --freeze_mlp False \
+  --freeze_backbone False \
   --vision_select_layer -1 \
-  --dataloader_num_workers 2 \
+  --dataloader_num_workers 4 \
   --bf16 True \
-  --num_train_epochs 30 \
+  --num_train_epochs 1 \
   --per_device_train_batch_size ${PER_DEVICE_BATCH_SIZE} \
   --gradient_accumulation_steps ${GRADIENT_ACC} \
-  --save_strategy "epoch" \
+  --save_strategy "steps" \
+  --save_steps 100 \
   --save_total_limit 3 \
-  --learning_rate 5e-5 \
+  --learning_rate 2e-5 \
   --weight_decay 0.01 \
-  --warmup_steps 50 \
+  --warmup_steps 500 \
   --lr_scheduler_type "cosine" \
   --logging_steps 1 \
-  --video_total_pixels 4096 \
+  --video_total_pixels 8192 \
   --sample_log_interval 1 \
-  --packing_buffer_size 16 \
-  --max_seq_length 4096 \
-  --max_num_tokens_per_sample 4096 \
-  --max_num_tokens 4096 \
+  --packing_buffer_size 32 \
+  --max_seq_length 6400 \
+  --max_num_tokens_per_sample 6400 \
+  --max_num_tokens 6400 \
   --do_train True \
   --grad_checkpoint True \
   --group_by_length False \
+  --deepspeed "deepspeed_configs/zero_stage1_config.json" \
   --report_to "tensorboard"\
   --run_name $script_name \
   --use_onelogger True \

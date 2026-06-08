@@ -92,7 +92,7 @@ class LocateAnythingForConditionalGeneration(LocateAnythingPreTrainedModel, Gene
             self.vision_model = vision_model
         else:
             if config.vision_config.model_type == 'moonvit':
-                config.vision_config._attn_implementation = 'flash_attention_2'
+                config.vision_config._attn_implementation = 'sdpa'
                 self.vision_model = MoonVitPretrainedModel(config.vision_config)
             else:
                 raise ValueError(f'Unsupported vision model type: {config.vision_config.model_type}. Only moonvit is supported.')
@@ -220,6 +220,7 @@ class LocateAnythingForConditionalGeneration(LocateAnythingPreTrainedModel, Gene
             vit_embeds = self.mlp1(vit_embeds)
             input_ids = input_ids.reshape(B * N)
             selected = (input_ids == self.image_token_index)
+            input_embeds = input_embeds.clone()
             try:
                 input_embeds[selected] = input_embeds[selected] * 0.0 + vit_embeds
                 ignore_flag = False

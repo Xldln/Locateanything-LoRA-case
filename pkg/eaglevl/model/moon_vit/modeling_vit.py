@@ -567,6 +567,9 @@ class MoonVitPretrainedModel(PreTrainedModel):
     _supports_sdpa = True
     supports_gradient_checkpointing = True
 
+    def get_input_embeddings(self):
+        return self.patch_embed
+
     def __init__(self, config: MoonViTConfig, *inputs, **kwargs):
         super().__init__(config, *inputs, **kwargs)
         config = deepcopy(config)
