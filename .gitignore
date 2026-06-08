@@ -16,3 +16,7 @@ inference_results/*
 hf_models/*
 
 hf_models/.gitkeep
+
+__pycache__/
+
+pkg/eaglevl/locate_anything.egg-info/
