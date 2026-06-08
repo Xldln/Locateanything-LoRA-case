@@ -16,6 +16,15 @@ from PIL import Image
 from transformers import AutoModel, AutoTokenizer, AutoProcessor
 
 
+# ---- HF mirror & local cache ----
+MODEL_CACHE_DIR = Path(__file__).parent / "hf_models"
+os.environ.setdefault("HF_ENDPOINT", "https://hf-mirror.com")
+os.environ.setdefault("HF_HOME", str(MODEL_CACHE_DIR))
+os.environ.setdefault("HF_HUB_CACHE", str(MODEL_CACHE_DIR / "hub"))
+MODEL_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+
+
+
 class LocateAnythingWorker:
     """Stateful worker that loads the model once and serves perception queries."""
 

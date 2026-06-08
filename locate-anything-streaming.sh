@@ -16,9 +16,9 @@ export WANDB_RUN_ID="finetune"
 export WANDB_RESUME="allow"
 export HF_TOKEN="${HF_TOKEN:?Please set HF_TOKEN environment variable}"
 
-GPUS=${GPUS:-8}
+GPUS=${GPUS:-1}
 NNODES=${1:-1}
-OUTPUT_DIR=${2:-"work_dirs/locany_debug"}
+OUTPUT_DIR=${2:-"datasets/robot-detection/work_dirs/locany_debug"}
 NODE_RANK=${NODE_RANK:-0}
 PORT=${PORT:-29500}
 MASTER_ADDR=${MASTER_ADDR:-"127.0.0.1"}
@@ -34,7 +34,7 @@ export NCCL_DEBUG=INFO
 
 script_path=${BASH_SOURCE[0]}
 script_name=$(basename "$script_path")
-MODEL_PATH=${MODEL_PATH:-"nvidia/LocateAnything-3B"}
+MODEL_PATH=${MODEL_PATH:-"hf_model"}
 
 LAUNCHER=pytorch torchrun \
     --nnodes=$NNODES \

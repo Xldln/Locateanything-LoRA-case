@@ -10,3 +10,9 @@ datasets/**/images/*
 inference_results/*
 
 !inference_results/.gitkeep
+
+.codegraph
+
+hf_models/*
+
+hf_models/.gitkeep
