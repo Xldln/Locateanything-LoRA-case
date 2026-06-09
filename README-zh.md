@@ -9,6 +9,7 @@
 ├── datasets/robot-detection/      # 自定义数据集
 ├── locateanything_worker.py       # 推理封装
 ├── locate-anything-streaming.sh   # 训练启动脚本
+├── build_env.sh                   # 环境配置脚本
 ├── generate_datasets.ipynb        # 用 YOLO 生成标注
 ├── check_model_predict.ipynb      # 验证预测结果
 └── process_data.ipynb             # 数据预处理
@@ -17,21 +18,20 @@
 ## 环境配置
 
 ```bash
-conda create -n lam python=3.10 -y
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
-
-cd pkg/yolo && pip install -e .
-cd pkg/eaglevl && pip install -e .
+bash build_env.sh
 ```
+
+该脚本创建 `lam` conda 环境（Python 3.10），安装 torch（CUDA 12.8）、EagleVL，以及额外依赖（`hf_xet`、`sortedcontainers`、`pynvml`、`tensorboard`）。
 
 ## 训练
 
 ```bash
-cd pkg/eaglevl
-bash ../../locate-anything-streaming.sh
+bash locate-anything-streaming.sh
 ```
 
-8 卡训练，使用 DeepSpeed ZeRO-1、MTP 多 token 预测、stream packing。通过环境变量配置：`GPUS`、`MODEL_PATH`、`OUTPUT_DIR`。
+脚本自动激活 `lam` conda 环境并启动训练，使用 DeepSpeed ZeRO-1、MTP 多 token 预测、stream packing。通过环境变量配置：`GPUS`、`MODEL_PATH`、`OUTPUT_DIR`。
+
+默认单卡 LoRA 微调，多卡可指定：`GPUS=8 bash locate-anything-streaming.sh`。
 
 ## 推理
 

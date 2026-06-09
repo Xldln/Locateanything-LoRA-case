@@ -9,6 +9,7 @@ Fine-tune [NVIDIA LocateAnything-3B](https://huggingface.co/nvidia/LocateAnythin
 ├── datasets/robot-detection/      # Custom dataset
 ├── locateanything_worker.py       # Inference worker
 ├── locate-anything-streaming.sh   # Training launcher
+├── build_env.sh                   # Environment setup script
 ├── generate_datasets.ipynb        # Generate annotations via YOLO
 ├── check_model_predict.ipynb      # Verify predictions
 └── process_data.ipynb             # Data preprocessing
@@ -17,21 +18,20 @@ Fine-tune [NVIDIA LocateAnything-3B](https://huggingface.co/nvidia/LocateAnythin
 ## Setup
 
 ```bash
-conda create -n lam python=3.10 -y
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
-
-cd pkg/yolo && pip install -e .
-cd pkg/eaglevl && pip install -e .
+bash build_env.sh
 ```
+
+This creates a `lam` conda environment with Python 3.10, installs torch (CUDA 12.8), EagleVL, and extra dependencies (`hf_xet`, `sortedcontainers`, `pynvml`, `tensorboard`).
 
 ## Training
 
 ```bash
-cd pkg/eaglevl
-bash ../../locate-anything-streaming.sh
+bash locate-anything-streaming.sh
 ```
 
-8-GPU training with DeepSpeed ZeRO-1, MTP, and stream packing. Config via env: `GPUS`, `MODEL_PATH`, `OUTPUT_DIR`.
+The script auto-activates the `lam` conda environment and launches training with DeepSpeed ZeRO-1, MTP, and stream packing. Config via env: `GPUS`, `MODEL_PATH`, `OUTPUT_DIR`.
+
+Default: 1-GPU LoRA fine-tuning. Override with `GPUS=8 bash locate-anything-streaming.sh`.
 
 ## Inference
 
