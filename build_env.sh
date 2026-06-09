@@ -16,7 +16,7 @@ cd pkg/eaglevl && pip install -e . && cd ../../
 
 
 ## other deps
-pip install hf_xet sortedcontainers pynvml
+pip install hf_xet sortedcontainers pynvml tensorboard
 
 
 ## download model weights

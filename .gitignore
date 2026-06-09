@@ -20,3 +20,5 @@ hf_models/.gitkeep
 __pycache__/
 
 pkg/eaglevl/locate_anything.egg-info/
+
+datasets/**/work_dirs/*
